@@ -1,0 +1,12 @@
+For starting the gopro:
+sudo gopro webcam
+
+For streaming output to /dev/video42 :
+ffmpeg -nostdin -i 'udp://@0.0.0.0:8554?overrun_nonfatal=1&fifo_size=50000000' -vf setpts=0.9*PTS -flags low_delay  -f:v mpegts -fflags nobuffer -vf format=yuv420p -f v4l2 /dev/video42
+
+For launching gstreamer view:
+gst-launch-1.0 v4l2src device=/dev/video42 ! video/x-raw, width=1920, height=1080, framerate=30/1 ! xvimagesink
+
+For running python script:
+python3 camera_caps.py
+
