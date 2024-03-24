@@ -1,3 +1,4 @@
+https://github.com/jschmid1/gopro_as_webcam_on_linux
 For starting the gopro:
 sudo gopro webcam
 
@@ -7,6 +8,8 @@ ffmpeg -nostdin -i 'udp://@0.0.0.0:8554?overrun_nonfatal=1&fifo_size=50000000' -
 For launching gstreamer view:
 gst-launch-1.0 v4l2src device=/dev/video42 ! video/x-raw, width=1920, height=1080, framerate=30/1 ! xvimagesink
 
+https://www.youtube.com/watch?v=rs4mQcJAjMM
+https://github.com/jetsonhacks/camera-caps
 For running python script:
 python3 camera_caps.py
 
