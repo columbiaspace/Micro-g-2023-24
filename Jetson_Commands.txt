@@ -17,3 +17,39 @@ python3 camera_caps.py
     txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
                                                                                                  ^
 SyntaxError: invalid syntax
+
+def take_photo(filename='photo.jpg', quality=0.8, delay=2):
+    start_time = time.time()
+    # Display video stream
+    js = Javascript('''
+        (async () => {
+            const video = document.createElement('video');
+            video.style.display = 'block';
+            const stream = await navigator.mediaDevices.getUserMedia({video: true});
+            document.body.appendChild(video);
+            video.srcObject = stream;
+            await video.play();
+            // Wait for the video to start streaming
+            await new Promise(resolve => video.onplaying = resolve);
+            // Capture a frame after delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            stream.getVideoTracks()[0].stop();
+            // Convert the canvas to base64 encoded image
+            const imgData = canvas.toDataURL('image/jpeg', 0.8);
+            google.colab.kernel.invokeFunction('notebook.take_photo', [imgData], {});
+        })();
+        ''')
+    display(js)
+    # Callback function to receive image data
+    def take_photo_callback(imgData):
+        binary = base64.b64decode(imgData.split(',')[1])
+        img = Image.open(io.BytesIO(binary))
+        img.save(filename, 'JPEG')
+        end_time = time.time()
+        print(f'Photo taken and saved as {filename}. Time taken: {end_time - start_time:.2f} seconds.')
+    # Register the callback function
+    output.register_callback('notebook.take_photo', take_photo_callback)
