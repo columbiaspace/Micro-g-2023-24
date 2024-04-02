@@ -4,55 +4,19 @@ from tkinter import ttk
 from tkinter import *
 from PIL import Image, ImageTk
 import cv2
+from win10toast import ToastNotifier
+from usbCameraAlpha import show_camera
 
 # Set up the main window
 root = tk.Tk()
 root.geometry("1024x768")  # Increased width to accommodate sidebar
 # Set up the sub window
 
-# Refreences this:
-#  https://stackoverflow.com/questions/31764908/window-inside-window
-sub=tk.Toplevel(root)
-sub.transient(root)
-sub.title('Sub Window')
-label = tk.Label(sub, text="This is a subwindow")
-label.pack(padx=20, pady=20)
+def show_notification():
+    toaster = ToastNotifier()
+    toaster.show_toast("Notification", "Event occurred!", duration=5)
 
-pos = []
 
-def main_move(event):
-    #When the main window moves, adjust the sub window to move with it
-    if pos:
-        sub.geometry("+{0}+{1}".format(pos[0], pos[1]))
-        # Change pos[0] and pos[1] to defined values (eg 50) for fixed position from main
-
-def sub_move(event):
-    # Set the min values
-    min_w = root.winfo_rootx()
-    min_h = root.winfo_rooty()
-    # Set the max values minus the buffer for window border
-    max_w = root.winfo_rootx() + root.winfo_width() - 15
-    max_h = root.winfo_rooty() + root.winfo_height() - 35
-
-    # Conditional statements to keep sub window inside main
-    if event.x < min_w:
-        sub.geometry("+{0}+{1}".format(min_w, event.y))
-
-    elif event.y < min_h:
-        sub.geometry("+{0}+{1}".format(event.x, min_h))
-
-    elif event.x + event.width > max_w:
-        sub.geometry("+{0}+{1}".format(max_w - event.width, event.y))
-
-    elif event.y + event.height > max_h:
-        sub.geometry("+{0}+{1}".format(event.x, max_h - event.height))
-
-    global pos
-    # Set the current sub window position
-    pos = [event.x, event.y]  
-
-root.bind('<Configure>', main_move)
-sub.bind('<Configure>', sub_move)
 
 
 # Left Sidebar for Object Class Toggles
@@ -115,6 +79,7 @@ def open_camera():
     video_label.photo_image = photo_image
     video_label.configure(image=photo_image)
     video_label.after(10, open_camera)
+
 
 def save_results():
     ret, frame = vid.read()
@@ -185,7 +150,9 @@ stop_button.pack(side="left", fill="x", expand=True, padx=10, pady=10)
 save_button = tk.Button(bottom_frame, text="Save Results", command=save_results)
 save_button.pack(side="left", fill="x", expand=True, padx=10, pady=10)
 
-open_camera_button = tk.Button(bottom_frame, text="Open Camera", command=open_camera)
+notify_button= Button(root, text= "Notify_Test", command=(show_notification))
+notify_button.pack()
+open_camera_button = tk.Button(bottom_frame, text="Open Camera", command=show_camera)
 open_camera_button.pack(side="left", fill="x", expand=True, padx=10, pady=10)
 
 root.mainloop()
