@@ -13,3 +13,7 @@ https://github.com/jetsonhacks/camera-caps
 For running python script:
 python3 camera_caps.py
 
+  File "detect.py", line 108
+    txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
+                                                                                                 ^
+SyntaxError: invalid syntax
